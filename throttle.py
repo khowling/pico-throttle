@@ -71,34 +71,3 @@ def sensor_handler(pin):
 
 speed_sensor.irq(trigger=Pin.IRQ_RISING | Pin.IRQ_FALLING, handler=sensor_handler)
 
-
-#speed_sensor.irq(trigger=Pin.IRQ_FALLING, handler=sensor_low_handler)
-
-'''
-last_pressed_ms = utime.ticks_ms()
-
-# Interupt handler (interrupts are queued, so need to be quick)
-def button_handler(pin):
-    global last_pressed_ms
-    # debounce (only trigger once in a 100mS period)
-    debounce_ms = utime.ticks_ms()
-    if (debounce_ms > last_pressed_ms+100):
-        print ("interrupted")
-        last_pressed_ms=utime.ticks_ms()
-
-speed_sensor.irq(trigger=Pin.IRQ_RISING, handler=button_handler)
-
-
-last_check_ms = utime.ticks_ms()
-
-while True:
-    if (last_pressed_ms > last_check_ms):
-        print ("pressed")
-        led_onboard.value(1)
-    last_check_ms = utime.ticks_ms()
-
-    # represents max speed to output (20kph - pulce every 350mS)
-    utime.sleep_ms(100)
-    led_onboard.value(0)
-
-'''
