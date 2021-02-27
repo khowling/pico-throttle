@@ -1,0 +1,36 @@
+from machine import Pin
+import utime
+
+#  GP25 = on-board LED, set as a output
+led_onboard = Pin(25, Pin.OUT)
+led_onboard.value(0)
+
+# GP14 - set as a input
+speed_sensor = Pin(14, Pin.IN, Pin.PULL_UP)
+
+last_sensor_close = utime.ticks_ms()
+last_sensor_open = utime.ticks_ms()
+
+
+def sensor_handler(sensor):
+    global last_sensor_close
+    global last_sensor_open
+    # debounce (only trigger once in a 100mS period)
+
+    irq_trigger_time = utime.ticks_ms()
+    sensor_val = sensor.value()
+    last_sensor_open_diff = utime.ticks_diff(
+        irq_trigger_time, last_sensor_open)
+    last_sensor_close_diff = utime.ticks_diff(
+        irq_trigger_time, last_sensor_close)
+    print(sensor_val, ",", irq_trigger_time, ",",
+          last_sensor_open_diff, ",", last_sensor_close_diff, sep='')
+
+    if (sensor_val == 0):  # CLOSE
+        last_sensor_close = irq_trigger_time
+    else:
+        last_sensor_open = irq_trigger_time
+
+
+speed_sensor.irq(trigger=Pin.IRQ_RISING |
+                 Pin.IRQ_FALLING, handler=sensor_handler)
