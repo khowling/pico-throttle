@@ -1,5 +1,6 @@
 from machine import Pin
 import utime
+import screen
 
 #  GP25 = on-board LED, set as a output
 led_onboard = Pin(25, Pin.OUT)
@@ -46,6 +47,9 @@ last_loop_pulce_finished = 0
 irq_time = 0
 irq_speed = 0
 
+oled = screen.SCREEN()
+oled.test()
+
 while True:
     loop_time = utime.ticks_ms()
     last_processed_diff = utime.ticks_diff(irq_last_rotation_time, last_loop_pulce_finished)
@@ -69,7 +73,7 @@ while True:
         on_for = min(500, int((duration_since_last_pulce+delay) * 0.05))
         speed = KM_PER_REVOLUTION * (MS_IN_AN_HOUR / (duration_since_last_pulce+delay))
         #print("irq_speed=", "{:.1f}".format(irq_speed), " speed=", "{:.1f}".format(speed), " on_for=", on_for," diff1=", utime.ticks_diff(irq_time, irq_last_rotation_time), " last_loop_pulce_finished=", last_loop_pulce_finished)
-
+        oled.display(speed)
         last_loop_pulce_started = loop_time + delay
         led_onboard.value(1)
         motor.value(1)
