@@ -22,21 +22,22 @@ print("MAX_SPEED_KMH=", MAX_SPEED_KMH,
       " MAX_SPEED_DURATION=", MAX_SPEED_DURATION)
 
 irq_last_rotation_time = 0
-#irq_last_speed_calc = 0
+irq_last_rotation_ms = 0
 
 
 def sensor_handler(sensor):
     global irq_last_rotation_time
-    #global irq_last_speed_calc
+    global irq_last_rotation_ms
 
     irq_trigger_time = utime.ticks_ms()
     irq_last_rotation_time_diff = utime.ticks_diff(irq_trigger_time, irq_last_rotation_time)
 
     # Got a falling edge, ignore all falling edges for the next 80mS (need to be doing 100kph!)
     if (irq_last_rotation_time_diff > 80):
-        #irq_last_speed_calc = KM_PER_REVOLUTION * (MS_IN_AN_HOUR/irq_last_rotation_time_diff)
+        #irq_last_speed_calc = 
         #print ("IRQ irq_last_speed_calc=",irq_last_speed_calc, " (irq_last_rotation_time_diff=",irq_last_rotation_time_diff,")")
         irq_last_rotation_time = irq_trigger_time
+        irq_last_rotation_ms = irq_last_rotation_time_diff
 
 
 
@@ -72,8 +73,9 @@ while True:
         # send pulce length depending on the speed (max .5seconds)
         on_for = min(500, int((duration_since_last_pulce+delay) * 0.05))
         speed = KM_PER_REVOLUTION * (MS_IN_AN_HOUR / (duration_since_last_pulce+delay))
+        irq_speed = KM_PER_REVOLUTION * (MS_IN_AN_HOUR/irq_last_rotation_ms)
         #print("irq_speed=", "{:.1f}".format(irq_speed), " speed=", "{:.1f}".format(speed), " on_for=", on_for," diff1=", utime.ticks_diff(irq_time, irq_last_rotation_time), " last_loop_pulce_finished=", last_loop_pulce_finished)
-        oled.display(speed)
+        oled.display(speed, irq_speed)
         last_loop_pulce_started = loop_time + delay
         led_onboard.value(1)
         motor.value(1)

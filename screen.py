@@ -54,27 +54,23 @@ class SCREEN:
         self.oled = ssd1306.SSD1306_I2C(self.oled_width, oled_height, machine.I2C(0,sda=machine.Pin(0), scl=machine.Pin(1), freq=400000))
 
 
-    def display(self, num):
+    def display(self, smallnum, num):
         left = digits[int(num *10 % 10 // 1)]
         middle = digits[int(num % 10 // 1)]
         right_int = int(num /10 % 10 // 1)
 
         self.oled.fill(0)
-        self.oled.blit(framebuf.FrameBuffer(left['b'], left['x'], left['y'], framebuf.MONO_HLSB), self.oled_width - 36, 0)
+        self.oled.blit(framebuf.FrameBuffer(left['b'], left['x'], left['y'], framebuf.MONO_HLSB), self.oled_width - 36, 52 - left['y'])
         self.oled.blit(fbdot, self.oled_width - 36 - 8, 52-8)
-        self.oled.blit(framebuf.FrameBuffer(middle['b'], middle['x'], middle['y'], framebuf.MONO_HLSB), self.oled_width - 36 - 8 - 2 - middle['x'], 0)
+        self.oled.blit(framebuf.FrameBuffer(middle['b'], middle['x'], middle['y'], framebuf.MONO_HLSB), self.oled_width - 36 - 8 - 3 - middle['x'], 52 - middle['y'])
         if (right_int > 0):
             right = digits[right_int]
-            self.oled.blit(framebuf.FrameBuffer(right['b'], right['x'], right['y'], framebuf.MONO_HLSB), self.oled_width - 36 - 8 - 2 - middle['x'] - middle['x'], 0)
+            self.oled.blit(framebuf.FrameBuffer(right['b'], right['x'], right['y'], framebuf.MONO_HLSB), self.oled_width - 36 - 8 - 3 - middle['x'] - 2 -  right['x'], 52 - right['y'])
 
-        if (num > 5):
-            if (num < 10): 
-                self.oled.text('Slow coach', self.oled_width - (8 * 10), 55)
-            else:
-                if (num < 20):
-                    self.oled.text('Speedyyyy', self.oled_width - (8 * 10), 55)
-                else:
-                    self.oled.text('!! SLOW DOWN !!', self.oled_width - (8 * 15), 55)
+        #if (num < 20): 
+        self.oled.text("{:.1f} Kph".format(smallnum), self.oled_width - (8 * 10), 56)
+        #else:
+        #    self.oled.text('!! SLOW DOWN !!', self.oled_width - (8 * 15), 55)
 
         self.oled.show()
 
@@ -82,17 +78,12 @@ class SCREEN:
     def test(self):
 
         speed = 0.0
-        while speed <30:
-            self.display(speed)
+        while speed <20:
+            self.display(speed, speed)
             #utime.sleep_ms(5)
-            speed = speed + 0.3
-
-        while speed >= 0:
-            self.display(speed)
-            #utime.sleep_ms(5)
-            speed = speed - 0.3
+            speed = speed + 0.6
         
-        self.display(0)
+        self.display(0,0)
 
 
 
