@@ -11,8 +11,8 @@ motor = Pin(17, Pin.OUT)
 motor.value(0)
 
 
-# ( 2.18 meters : circumference of a 27.5" x 2.25" wheel )
-KM_PER_REVOLUTION = 2.18 / 1000
+# ( 2.195 meters : circumference of a 27.5" x 2.25" wheel )
+KM_PER_REVOLUTION = 2.195 / 1000
 MS_IN_AN_HOUR = 3600000
 MAX_SPEED_KMH = 20
 MAX_SPEED_DURATION = int(
